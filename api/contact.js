@@ -1,14 +1,25 @@
-// contact.js - API para recibir datos de contacto y procesarlos
+// api/contact.js
 
-const express = require('express');
-const router = express.Router();
+export default async function handler(req, res) {
+  // --- CORS (si tu frontend está en otro dominio) ---
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 
-// Aquí puedes agregar la lógica para guardar en Google Sheets y enviar email
-router.post('/', async (req, res) => {
-    // Recibe los datos del formulario
-    const datos = req.body;
-    // ... lógica para guardar en Sheets y enviar email ...
-    res.json({ success: true, message: 'Contacto recibido correctamente.' });
-});
+  // Solo aceptamos POST
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Método no permitido' });
+  }
 
-module.exports = router;
+  try {
+    console.log('✔️ Handler básico recibió:', req.body);
+    // Aquí iría la lógica de Sheets / correo, pero de momento devolvemos OK:
+    return res.status(200).json({ success: true, message: '¡Funciona el handler!' });
+  } catch (err) {
+    console.error('💥 Error en handler básico:', err);
+    return res.status(500).json({ error: 'Error interno de prueba' });
+  }
+}
